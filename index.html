@@ -3,64 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Final Grade Calculator</title>
+    <title>Dynamic Final Grade Calculator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="calculator-container">
         <h1>Final Grade Calculator</h1>
-        <p>Find out what you need on your final exam to get your target grade.</p>
+        <p>Dynamically calculate what you need on your final exam.</p>
         
         <form id="grade-form">
-            <div class="input-group target-group">
-                <label for="target-grade">What is your Target Grade? (%)</label>
-                <input type="number" id="target-grade" placeholder="e.g., 90" required min="0" max="150">
+            <div class="top-fields">
+                <div class="input-group">
+                    <label for="target-grade">Target Grade (%)</label>
+                    <input type="number" id="target-grade" placeholder="e.g., 90" required min="0" max="150">
+                </div>
+                <div class="input-group">
+                    <label for="extra-credit">Extra Credit (%)</label>
+                    <input type="number" id="extra-credit" placeholder="e.g., 2" min="0" value="0">
+                </div>
             </div>
 
-            <hr>
+            <div id="sections-container"></div>
 
-            <div class="category-row">
-                <label>Category</label>
-                <label>Your Grade (%)</label>
-                <label>Weight (%)</label>
+            <div class="grade-section final-section">
+                <h3>Final Exam</h3>
+                <div class="section-row">
+                    <span class="disabled-input">Final Exam Score Needed</span>
+                    <div class="input-unit">
+                        <input type="number" id="final-weight" placeholder="Weight" required min="0" max="100">
+                        <span class="unit-label">%</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="category-row">
-                <span>Homework</span>
-                <input type="number" class="score" id="hw-score" placeholder="0-100" min="0">
-                <input type="number" class="weight" id="hw-weight" placeholder="%" min="0">
-            </div>
-
-            <div class="category-row">
-                <span>Assignments</span>
-                <input type="number" class="score" id="assign-score" placeholder="0-100" min="0">
-                <input type="number" class="weight" id="assign-weight" placeholder="%" min="0">
-            </div>
-
-            <div class="category-row">
-                <span>Quizzes</span>
-                <input type="number" class="score" id="quiz-score" placeholder="0-100" min="0">
-                <input type="number" class="weight" id="quiz-weight" placeholder="%" min="0">
-            </div>
-
-            <div class="category-row">
-                <span>Midterm</span>
-                <input type="number" class="score" id="midterm-score" placeholder="0-100" min="0">
-                <input type="number" class="weight" id="midterm-weight" placeholder="%" min="0">
-            </div>
-
-            <div class="category-row">
-                <span>Final Exam</span>
-                <span class="disabled-input">Targeting...</span>
-                <input type="number" class="weight" id="final-weight" placeholder="%" required min="0">
-            </div>
-
-            <div class="input-group ec-group">
-                <label for="extra-credit">Extra Credit To Add (Optional % points to overall grade)</label>
-                <input type="number" id="extra-credit" placeholder="e.g., 2" min="0" value="0">
-            </div>
-
-            <button type="button" onclick="calculateGrade()">Calculate Required Score</button>
+            <button type="button" class="btn-calculate" onclick="calculateGrade()">Calculate Required Score</button>
         </form>
 
         <div id="result" class="result-box hidden">

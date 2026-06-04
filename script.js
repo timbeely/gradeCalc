@@ -1,9 +1,9 @@
-// Define the 4 custom core sections
+// Define the 4 custom core sections with singular names for labels
 const sections = [
-    { id: 'homework', name: 'Homework' },
-    { id: 'assignments', name: 'Assignments' },
-    { id: 'quizzes', name: 'Quizzes' },
-    { id: 'midterms', name: 'Midterms' }
+    { id: 'homework', name: 'Homework', singular: 'HW' },
+    { id: 'assignments', name: 'Assignments', singular: 'Assignment' },
+    { id: 'quizzes', name: 'Quizzes', singular: 'Quiz' },
+    { id: 'midterms', name: 'Midterms', singular: 'Midterm' }
 ];
 
 // Track how many rows each section has
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         div.innerHTML = `
             <h3>${sec.name}</h3>
             <div class="section-controls">
-                <button type="button" class="btn-add" onclick="addRow('${sec.id}')">+ Add ${sec.name}</button>
+                <button type="button" class="btn-add" onclick="addRow('${sec.id}')">+ Add ${sec.singular}</button>
                 <label>
                     <input type="checkbox" id="check-${sec.id}" onchange="toggleWeightMode('${sec.id}')"> Individual Weights
                 </label>
@@ -38,19 +38,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 2. Add an assignment row to a category
+// 2. Add an assignment row to a category with a delete action
 function addRow(sectionId) {
     sectionCounts[sectionId]++;
     const count = sectionCounts[sectionId];
     const rowsContainer = document.getElementById(`rows-${sectionId}`);
     const isIndividual = document.getElementById(`check-${sectionId}`).checked;
+    
+    // Find the current section configuration to grab its singular name
+    const secConfig = sections.find(s => s.id === sectionId);
 
     const row = document.createElement('div');
     row.className = `section-row ${isIndividual ? '' : 'shared-weight'}`;
     row.id = `row-${sectionId}-${count}`;
     
     row.innerHTML = `
-        <span>Item #${count}</span>
+        <span>${secConfig.singular} #${count}</span>
         <div class="input-unit">
             <input type="number" class="${sectionId}-score" placeholder="Score" min="0">
             <span>%</span>
@@ -59,8 +62,17 @@ function addRow(sectionId) {
             <input type="number" class="${sectionId}-weight" placeholder="Weight" min="0">
             <span>%</span>
         </div>
+        <button type="button" class="btn-delete" onclick="removeRow('${sectionId}', ${count})">Delete</button>
     `;
     rowsContainer.appendChild(row);
+}
+
+// New helper to remove a specific row entry
+function removeRow(sectionId, rowCount) {
+    const rowToRemove = document.getElementById(`row-${sectionId}-${rowCount}`);
+    if (rowToRemove) {
+        rowToRemove.remove();
+    }
 }
 
 // 3. Handle toggling between Individual weights vs Single Group weight
@@ -177,7 +189,7 @@ function calculateGrade() {
         messageP.innerText = "Fantastic! You have mathematically clinched your target score already.";
         messageP.style.color = "var(--success)";
     } else {
-        messageP.innerText = "Perfectly doable. Best of luck on your preparation!";
+        messageP.innerText = "Perfectly doable. Good Luck!";
         messageP.style.color = "var(--text)";
     }
 }

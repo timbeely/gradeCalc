@@ -80,7 +80,8 @@ input:focus { border-color: var(--primary); }
 
 .section-row {
     display: grid;
-    grid-template-columns: 2fr 1.5fr 1.5fr;
+    /* Grid expanded to 4 columns to fit the delete button smoothly */
+    grid-template-columns: 1.5fr 1.5fr 1.5fr 1fr;
     gap: 10px;
     align-items: center;
     margin-bottom: 8px;
@@ -88,8 +89,26 @@ input:focus { border-color: var(--primary); }
 
 /* For shared total weight view layout alignment */
 .section-row.shared-weight {
-    grid-template-columns: 2fr 1.5fr;
+    /* When weights are hidden, keep columns aligned nicely */
+    grid-template-columns: 1.5fr 1.5fr 0fr 1fr;
 }
+
+.btn-delete {
+    background: #fee2e2;
+    color: var(--danger);
+    border: none;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+
+.btn-delete:hover {
+    background: #fca5a5;
+}
+
 
 .input-unit {
     display: flex;

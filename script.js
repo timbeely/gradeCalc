@@ -198,11 +198,11 @@ function calculateGrade(isExplicitClick = true) {
     const weightWithoutFinal = totalWeightCalculated - finalWeight;
     let currentClassGrade = 0;
     if (weightWithoutFinal > 0) {
-        currentClassGrade = (currentEarnedPoints / (weightWithoutFinal / 100)).toFixed(2);
+        currentClassGrade = + extraCredit + (currentEarnedPoints / (weightWithoutFinal / 100)).toFixed(2);
     }
 
     // Render outputs
-    currentGradeSpan.innerText = currentClassGrade + extraCredit;
+    currentGradeSpan.innerText = currentClassGrade;
     requiredScoreSpan.innerText = requiredFinal;
     resultDiv.classList.remove('hidden');
 

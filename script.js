@@ -198,7 +198,9 @@ function calculateGrade(isExplicitClick = true) {
     const weightWithoutFinal = totalWeightCalculated - finalWeight;
     let currentClassGrade = 0;
     if (weightWithoutFinal > 0) {
-        currentClassGrade = ((currentEarnedPoints / (weightWithoutFinal / 100)) + extraCredit).toFixed(2);
+        // FIX: Wrap extraCredit in parseFloat() to prevent text concatenation bugs
+        const baseGrade = currentEarnedPoints / (weightWithoutFinal / 100);
+        currentClassGrade = (baseGrade + parseFloat(extraCredit)).toFixed(2);
     }
 
     // Render outputs

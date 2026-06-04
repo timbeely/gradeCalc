@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <input type="checkbox" id="check-${sec.id}" onchange="toggleWeightMode('${sec.id}')"> Individual Weights
                     </label>
                     <div class="input-unit" id="total-weight-wrapper-${sec.id}">
-                        <input type="number" id="total-weight-${sec.id}" placeholder="Total Weight" min="0" max="100" oninput="calculateGrade(false)">
+                        <input type="number" id="total-weight-${sec.id}" placeholder="Weight" min="0" max="100" oninput="calculateGrade(false)">
                         <span>% of grade</span>
                     </div>
                 </div>

@@ -9,6 +9,15 @@
     --danger: #dc2626;
 }
 
+/* Dark Theme Color Palette */
+.dark-theme {
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --text: #f8fafc;
+    --border: #334155;
+    --fafafa: #1e293b; /* Replaces the light card background background */
+}
+
 body {
     font-family: system-ui, -apple-system, sans-serif;
     background-color: var(--bg);
@@ -61,7 +70,7 @@ input:focus { border-color: var(--primary); }
 
 /* Section Cards */
 .grade-section {
-    background: #fafafa;
+    background: var(--fafafa, #fafafa); /* Falls back to light gray if theme isn't dark */
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 16px;
@@ -213,3 +222,22 @@ input:focus { border-color: var(--primary); }
 #required-score { color: var(--primary); font-size: 28px; font-weight: 700; }
 
 .hidden { display: none !important; }
+
+/* Dark Mode Toggle Button Fixed Layout */
+.theme-toggle-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.btn-theme {
+    background: var(--border);
+    color: var(--text);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}

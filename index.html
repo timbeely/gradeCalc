@@ -9,6 +9,9 @@
 </head>
 <body>
     <div class="calculator-container">
+        <div class="theme-toggle-container">
+            <button type="button" class="btn-theme" id="theme-button" onclick="toggleTheme()">🌙 Dark Mode</button>
+        </div>
         <h1>Final Grade Calculator</h1>
         <p> Calculate what you need on your final exam. </p>
         <p> Enter your target grade, any extra credit, and the weights of your assignments. 
@@ -25,7 +28,7 @@
                     <input type="number" id="extra-credit" placeholder="e.g., 2" min="0" value="0" oninput="calculateGrade(false)">
                 </div>
             </div>
-        <p> NOTE: The extra credit will be added as a bonus % to your current grade. 
+        <p> NOTE: The extra credit will be added as a bonus % to your current grade. (Current Grade (%) + Extra Credit (%) = Adjusted Current Grade)
             Your final exam threshold does include the extra credit.
             If extra credit is per assignment and not an overall bonus, simply add it to the assignment score.
             Example: +10% to an 100% assignment would be 110% score for that assignment.</p>  
@@ -53,6 +56,7 @@
             <h2>You need a <span id="required-score">0</span>% on the final exam.</h2>
             <p id="result-message"></p>
         </div>
+        <p> By: TJ Bielefeld </p>
     </div>
 </body>
 </html>

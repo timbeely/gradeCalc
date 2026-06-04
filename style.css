@@ -70,16 +70,25 @@ input:focus { border-color: var(--primary); }
 
 .grade-section h3 { margin: 0 0 12px 0; color: #374151; }
 
-/* Restored: Standard layout controls for category headers */
+/* FIX: Forces checkbox and total weight boxes to stay right while Add button stays left */
 .section-controls {
     display: flex;
     gap: 16px;
     align-items: center;
-    margin-bottom: 12px;
+    justify-content: space-between; /* Creates the left-to-right split */
+    margin-bottom: 16px;
     font-size: 14px;
 }
 
-/* Row wrapper: Keeps labels left and pushes the inputs grouped right */
+/* Helper container to keep checkbox and total weight grouped cleanly on the right */
+.section-controls-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: flex-end;
+}
+
+/* Row elements: Keep labels on the left margin wall and input clusters right */
 .section-row {
     display: flex;
     justify-content: space-between;
@@ -88,7 +97,7 @@ input:focus { border-color: var(--primary); }
     gap: 12px;
 }
 
-/* Flex grouping container for score, individual weight, and delete blocks */
+/* Flex grouping wrapper to pin score, weight, and delete blocks flush right */
 .section-row .row-inputs-group {
     display: flex;
     align-items: center;
@@ -96,7 +105,7 @@ input:focus { border-color: var(--primary); }
     gap: 10px;
 }
 
-/* Locks items labels (e.g. HW #1) firmly to the left border margin */
+/* Anchors item metrics labels cleanly along the left margin */
 .row-label {
     text-align: left;
     font-weight: 500;
@@ -126,7 +135,7 @@ input:focus { border-color: var(--primary); }
 }
 
 .input-unit input { 
-    width: 80px; /* Constrained uniformly for percentage input visibility */
+    width: 80px; /* Aligned and proportioned perfectly for percentages */
 }
 
 .btn-add {
@@ -141,7 +150,7 @@ input:focus { border-color: var(--primary); }
 }
 .btn-add:hover { background: #c7d2fe; }
 
-/* ADDED BACK: Left-to-right flex split alignment rules for your final exam card */
+/* Keeps final exam layout structured split left-to-right */
 .final-section .section-row {
     display: flex;
     justify-content: space-between;
@@ -172,7 +181,7 @@ input:focus { border-color: var(--primary); }
 }
 .btn-calculate:hover { background: var(--primary-hover); }
 
-/* Layout styles for your running Current Class Grade section */
+/* Class Standings Metrics */
 .current-grade-display {
     font-size: 18px;
     font-weight: 600;

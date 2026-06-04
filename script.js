@@ -21,12 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3>${sec.name}</h3>
             <div class="section-controls">
                 <button type="button" class="btn-add" onclick="addRow('${sec.id}')">+ Add ${sec.singular}</button>
-                <label>
-                    <input type="checkbox" id="check-${sec.id}" onchange="toggleWeightMode('${sec.id}')"> Individual Weights
-                </label>
-                <div class="input-unit" id="total-weight-wrapper-${sec.id}">
-                    <input type="number" id="total-weight-${sec.id}" placeholder="Total Weight" min="0" max="100" oninput="calculateGrade(false)">
-                    <span>% of grade</span>
+                <div class="section-controls-right">
+                    <label>
+                        <input type="checkbox" id="check-${sec.id}" onchange="toggleWeightMode('${sec.id}')"> Individual Weights
+                    </label>
+                    <div class="input-unit" id="total-weight-wrapper-${sec.id}">
+                        <input type="number" id="total-weight-${sec.id}" placeholder="Total Weight" min="0" max="100" oninput="calculateGrade(false)">
+                        <span>% of grade</span>
+                    </div>
                 </div>
             </div>
             <div id="rows-${sec.id}"></div>
@@ -38,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 2. Add an assignment row to a category with a delete action
 function addRow(sectionId) {
     const rowsContainer = document.getElementById(`rows-${sectionId}`);
     const isIndividual = document.getElementById(`check-${sectionId}`).checked;

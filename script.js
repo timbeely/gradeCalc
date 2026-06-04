@@ -194,11 +194,11 @@ function calculateGrade(isExplicitClick = true) {
     const pointsNeeded = targetGrade - currentEarnedPoints - extraCredit;
     const requiredFinal = (pointsNeeded / (finalWeight / 100)).toFixed(2);
 
-    // FIX: Calculate current class grade strictly from core assignments (No Extra Credit included)
+    // Calculate current class grade (points earned scaled to weight completed, plus flat extra credit at the end)
     const weightWithoutFinal = totalWeightCalculated - finalWeight;
     let currentClassGrade = 0;
     if (weightWithoutFinal > 0) {
-        currentClassGrade = + extraCredit + (currentEarnedPoints / (weightWithoutFinal / 100)).toFixed(2);
+        currentClassGrade = ((currentEarnedPoints / (weightWithoutFinal / 100)) + extraCredit).toFixed(2);
     }
 
     // Render outputs

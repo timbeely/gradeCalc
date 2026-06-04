@@ -70,35 +70,33 @@ input:focus { border-color: var(--primary); }
 
 .grade-section h3 { margin: 0 0 12px 0; color: #374151; }
 
-/* Flushes checkboxes and global weights neatly to the right side */
+/* Restored: Standard layout controls for category headers */
 .section-controls {
     display: flex;
     gap: 16px;
     align-items: center;
-    justify-content: flex-end;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     font-size: 14px;
 }
 
-/* Refined grid layout for 4-column item rows when Individual Weights is ON */
+/* Row wrapper: Keeps labels left and pushes the inputs grouped right */
 .section-row {
-    display: grid;
-    grid-template-columns: 2fr 1.2fr 1.2fr 0.8fr;
-    gap: 12px;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    gap: 12px;
 }
 
-/* Keeps columns perfectly proportional when individual weights are hidden (OFF) */
-.section-row.shared-weight {
-    grid-template-columns: 2fr 1.2fr 0fr 0.8fr;
+/* Flex grouping container for score, individual weight, and delete blocks */
+.section-row .row-inputs-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
-.section-row.shared-weight .hidden {
-    display: none !important;
-}
-
-/* Explicitly forces row labels (HW #1, Quiz #1) to stay locked to the left wall */
+/* Locks items labels (e.g. HW #1) firmly to the left border margin */
 .row-label {
     text-align: left;
     font-weight: 500;
@@ -121,32 +119,29 @@ input:focus { border-color: var(--primary); }
     background: #fca5a5;
 }
 
-/* Ensures the input units (Score & Weight) align tightly to the right side */
 .input-unit {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 6px;
-    width: 100%;
+    gap: 4px;
 }
 
-.input-unit input { width: 100%; }
+.input-unit input { 
+    width: 80px; /* Constrained uniformly for percentage input visibility */
+}
 
-/* Keeps the Add button anchored left, pushing other elements right */
 .btn-add {
     background: #e0e7ff;
     color: var(--primary);
     border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
+    padding: 6px 12px;
+    border-radius: 4px;
     font-weight: 600;
     cursor: pointer;
     font-size: 13px;
-    margin-right: auto;
 }
 .btn-add:hover { background: #c7d2fe; }
 
-/* Forces the final exam block to mirror the exact same left-to-right alignment split */
+/* ADDED BACK: Left-to-right flex split alignment rules for your final exam card */
 .final-section .section-row {
     display: flex;
     justify-content: space-between;

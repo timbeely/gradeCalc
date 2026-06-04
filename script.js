@@ -44,7 +44,6 @@ function addRow(sectionId) {
     const isIndividual = document.getElementById(`check-${sectionId}`).checked;
     const secConfig = sections.find(s => s.id === sectionId);
 
-    // Create unique ID timestamp to keep track of the element safely
     const uniqueId = Date.now() + Math.random().toString(36).substr(2, 5);
 
     const row = document.createElement('div');
@@ -53,19 +52,20 @@ function addRow(sectionId) {
     
     row.innerHTML = `
         <span class="row-label">${secConfig.singular}</span>
-        <div class="input-unit">
-            <input type="number" class="${sectionId}-score" placeholder="Score" min="0" oninput="calculateGrade(false)">
-            <span>%</span>
+        <div class="row-inputs-group">
+            <div class="input-unit">
+                <input type="number" class="${sectionId}-score" placeholder="Score" min="0" oninput="calculateGrade(false)">
+                <span>%</span>
+            </div>
+            <div class="input-unit ${isIndividual ? '' : 'hidden'}" id="weight-input-wrapper-${sectionId}-${uniqueId}">
+                <input type="number" class="${sectionId}-weight" placeholder="Weight" min="0" oninput="calculateGrade(false)">
+                <span>%</span>
+            </div>
+            <button type="button" class="btn-delete" onclick="removeRow('${sectionId}', '${uniqueId}')">Delete</button>
         </div>
-        <div class="input-unit ${isIndividual ? '' : 'hidden'}" id="weight-input-wrapper-${sectionId}-${uniqueId}">
-            <input type="number" class="${sectionId}-weight" placeholder="Weight" min="0" oninput="calculateGrade(false)">
-            <span>%</span>
-        </div>
-        <button type="button" class="btn-delete" onclick="removeRow('${sectionId}', '${uniqueId}')">Delete</button>
     `;
     rowsContainer.appendChild(row);
 
-    // Call helper to clean up numbering sequentially (1, 2, 3...)
     updateRowNumbers(sectionId);
 }
 

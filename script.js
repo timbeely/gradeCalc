@@ -190,15 +190,15 @@ function calculateGrade(isExplicitClick = true) {
         return;
     }
 
-    // Run final algebra equation
+    // Run final algebra equation (Extra credit lowers the points needed on the final)
     const pointsNeeded = targetGrade - currentEarnedPoints - extraCredit;
     const requiredFinal = (pointsNeeded / (finalWeight / 100)).toFixed(2);
 
-    // Calculate current class grade
+    // FIX: Calculate current class grade strictly from core assignments (No Extra Credit included)
     const weightWithoutFinal = totalWeightCalculated - finalWeight;
     let currentClassGrade = 0;
     if (weightWithoutFinal > 0) {
-        currentClassGrade = ((currentEarnedPoints + extraCredit) / (weightWithoutFinal / 100)).toFixed(2);
+        currentClassGrade = (currentEarnedPoints / (weightWithoutFinal / 100)).toFixed(2);
     }
 
     // Render outputs
@@ -206,6 +206,7 @@ function calculateGrade(isExplicitClick = true) {
     requiredScoreSpan.innerText = requiredFinal;
     resultDiv.classList.remove('hidden');
 
+    // Dynamic message thresholds
     if (requiredFinal > 100) {
         messageP.innerText = "You'll need extra credit or a curve to reach this target.";
         messageP.style.color = "var(--danger)";

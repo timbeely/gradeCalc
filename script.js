@@ -6,9 +6,6 @@ const sections = [
     { id: 'midterms', name: 'Midterms', singular: 'Midterm' }
 ];
 
-// Track how many rows each section has
-const sectionCounts = { homework: 0, assignments: 0, quizzes: 0, midterms: 0 };
-
 // 1. Build the UI dynamically when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('sections-container');
@@ -26,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <input type="checkbox" id="check-${sec.id}" onchange="toggleWeightMode('${sec.id}')"> Individual Weights
                     </label>
                     <div class="input-unit" id="total-weight-wrapper-${sec.id}">
-                        <input type="number" id="total-weight-${sec.id}" placeholder="Weight" min="0" max="100" oninput="calculateGrade(false)">
+                        <input type="number" id="total-weight-${sec.id}" placeholder="Weight" min="0" max="100" oninput="calculateGrade(false); saveFormData();">
                         <span>% of grade</span>
                     </div>
                 </div>
@@ -34,13 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
             <div id="rows-${sec.id}"></div>
         `;
         container.appendChild(div);
-        
-        // Start each category with 1 default entry row
-        addRow(sec.id);
     });
+
+    // Caching Automation: Load any existing user backups or fall back to default empty rows
+    loadSavedData();
+    initTheme();
 });
 
-function addRow(sectionId) {
+// 2. Add an assignment row to a category (Enhanced to handle optional initial cache values)
+function addRow(sectionId, initialScore = '', initialWeight = '') {
     const rowsContainer = document.getElementById(`rows-${sectionId}`);
     const isIndividual = document.getElementById(`check-${sectionId}`).checked;
     const secConfig = sections.find(s => s.id === sectionId);
@@ -55,11 +54,11 @@ function addRow(sectionId) {
         <span class="row-label">${secConfig.singular}</span>
         <div class="row-inputs-group">
             <div class="input-unit">
-                <input type="number" class="${sectionId}-score" placeholder="Score" min="0" oninput="calculateGrade(false)">
+                <input type="number" class="${sectionId}-score" placeholder="Score" min="0" value="${initialScore}" oninput="calculateGrade(false); saveFormData();">
                 <span>%</span>
             </div>
             <div class="input-unit ${isIndividual ? '' : 'hidden'}" id="weight-input-wrapper-${sectionId}-${uniqueId}">
-                <input type="number" class="${sectionId}-weight" placeholder="Weight" min="0" oninput="calculateGrade(false)">
+                <input type="number" class="${sectionId}-weight" placeholder="Weight" min="0" value="${initialWeight}" oninput="calculateGrade(false); saveFormData();">
                 <span>%</span>
             </div>
             <button type="button" class="btn-delete" onclick="removeRow('${sectionId}', '${uniqueId}')">Delete</button>
@@ -68,6 +67,7 @@ function addRow(sectionId) {
     rowsContainer.appendChild(row);
 
     updateRowNumbers(sectionId);
+    saveFormData();
 }
 
 // Helper to remove a specific row entry and trigger re-numbering
@@ -77,6 +77,7 @@ function removeRow(sectionId, uniqueId) {
         rowToRemove.remove();
         updateRowNumbers(sectionId);
         calculateGrade(false); // Live update calculations on delete silently
+        saveFormData();
     }
 }
 
@@ -114,6 +115,7 @@ function toggleWeightMode(sectionId) {
         }
     }
     calculateGrade(false);
+    saveFormData();
 }
 
 // 4. Heavy Math Calculations
@@ -198,7 +200,6 @@ function calculateGrade(isExplicitClick = true) {
     const weightWithoutFinal = totalWeightCalculated - finalWeight;
     let currentClassGrade = 0;
     if (weightWithoutFinal > 0) {
-        // FIX: Wrap extraCredit in parseFloat() to prevent text concatenation bugs
         const baseGrade = currentEarnedPoints / (weightWithoutFinal / 100);
         currentClassGrade = (baseGrade + parseFloat(extraCredit)).toFixed(2);
     }
@@ -229,4 +230,93 @@ function calculateGrade(isExplicitClick = true) {
         messageP.innerText = "It's going to be tough. Lock in!";
         messageP.style.color = "var(--text)";
     }
+}
+
+// AUTOMATION: Compiles state values and saves them into a secure local storage JSON string
+function saveFormData() {
+    const dataToSave = {
+        targetGrade: document.getElementById('target-grade').value,
+        extraCredit: document.getElementById('extra-credit').value,
+        finalWeight: document.getElementById('final-weight').value,
+        sections: {}
+    };
+
+    sections.forEach(sec => {
+        const isIndividual = document.getElementById(`check-${sec.id}`).checked;
+        const totalWeight = document.getElementById(`total-weight-${sec.id}`).value;
+        
+        const scoreElements = document.querySelectorAll(`.${sec.id}-score`);
+        const weightElements = document.querySelectorAll(`.${sec.id}-weight`);
+        
+        const entries = [];
+        scoreElements.forEach((el, index) => {
+            entries.push({
+                score: el.value,
+                weight: isIndividual && weightElements[index] ? weightElements[index].value : ''
+            });
+        });
+
+        dataToSave.sections[sec.id] = {
+            isIndividual: isIndividual,
+            totalWeight: totalWeight,
+            entries: entries
+        };
+    });
+
+    localStorage.setItem('gradeCalcBackup', JSON.stringify(dataToSave));
+}
+
+// AUTOMATION: Parses saved local string data on boot and structurally parses fields
+function loadSavedData() {
+    const savedString = localStorage.getItem('gradeCalcBackup');
+    if (!savedString) {
+        // Fallback: If no memory profile exists, initialize 1 entry row per section card
+        sections.forEach(sec => addRow(sec.id));
+        return;
+    }
+
+    const data = JSON.parse(savedString);
+    document.getElementById('target-grade').value = data.targetGrade || '';
+    document.getElementById('extra-credit').value = data.extraCredit || '0';
+    document.getElementById('final-weight').value = data.finalWeight || '';
+
+    sections.forEach(sec => {
+        const secData = data.sections[sec.id];
+        if (secData) {
+            document.getElementById(`check-${sec.id}`).checked = secData.isIndividual;
+            document.getElementById(`total-weight-${sec.id}`).value = secData.totalWeight || '';
+            
+            // Re-render explicit component container visibility states
+            document.getElementById(`total-weight-wrapper-${sec.id}`).classList.toggle('hidden', secData.isIndividual);
+
+            if (secData.entries && secData.entries.length > 0) {
+                secData.entries.forEach(entry => {
+                    addRow(sec.id, entry.score, entry.weight);
+                });
+            } else {
+                addRow(sec.id);
+            }
+        } else {
+            addRow(sec.id);
+        }
+    });
+
+    // Run active computation silently to display state data results instantly
+    calculateGrade(false);
+}
+
+// THEME CONTROL: Reads cached visual layouts on runtime startup
+function initTheme() {
+    const savedTheme = localStorage.getItem('gradeCalcTheme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        document.getElementById('theme-button').innerText = "☀️ Light Mode";
+    }
+}
+
+// THEME CONTROL: Alternates layout stylesheet configurations smoothly
+function toggleTheme() {
+    const isDark = document.body.classList.toggle('dark-theme');
+    localStorage.setItem('gradeCalcTheme', isDark ? 'dark' : 'light');
+    document.getElementById('theme-button').innerText = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
 }

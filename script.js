@@ -122,7 +122,7 @@ function calculateGrade() {
                     totalIndividualWeight += weightVal;
                 }
             }
-        };);
+        });
 
         if (validScores.length === 0) continue; // Skip category entirely if left blank
 

@@ -70,7 +70,7 @@ input:focus { border-color: var(--primary); }
 
 .grade-section h3 { margin: 0 0 12px 0; color: #374151; }
 
-/* FIX: Flushes check-boxes and global weights neatly to the right side */
+/* Flushes checkboxes and global weights neatly to the right side */
 .section-controls {
     display: flex;
     gap: 16px;
@@ -80,23 +80,29 @@ input:focus { border-color: var(--primary); }
     font-size: 14px;
 }
 
-/* FIX: Refined spacing and alignments for 4-column item rows */
+/* Refined grid layout for 4-column item rows when Individual Weights is ON */
 .section-row {
     display: grid;
     grid-template-columns: 2fr 1.2fr 1.2fr 0.8fr;
     gap: 12px;
     align-items: center;
     margin-bottom: 10px;
-    text-align: right;
 }
 
-/* FIX: Keeps columns perfectly proportional when individual weights are hidden */
+/* Keeps columns perfectly proportional when individual weights are hidden (OFF) */
 .section-row.shared-weight {
     grid-template-columns: 2fr 1.2fr 0fr 0.8fr;
 }
 
 .section-row.shared-weight .hidden {
     display: none !important;
+}
+
+/* Explicitly forces row labels (HW #1, Quiz #1) to stay locked to the left wall */
+.row-label {
+    text-align: left;
+    font-weight: 500;
+    color: #374151;
 }
 
 .btn-delete {
@@ -115,17 +121,18 @@ input:focus { border-color: var(--primary); }
     background: #fca5a5;
 }
 
-/* FIX: Ensures the input metrics and labels stay clean */
+/* Ensures the input units (Score & Weight) align tightly to the right side */
 .input-unit {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 6px;
+    width: 100%;
 }
 
 .input-unit input { width: 100%; }
 
-/* FIX: Keeps the Add button anchored left, pushing other elements right */
+/* Keeps the Add button anchored left, pushing other elements right */
 .btn-add {
     background: #e0e7ff;
     color: var(--primary);
@@ -138,6 +145,23 @@ input:focus { border-color: var(--primary); }
     margin-right: auto;
 }
 .btn-add:hover { background: #c7d2fe; }
+
+/* Forces the final exam block to mirror the exact same left-to-right alignment split */
+.final-section .section-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.final-section .disabled-input {
+    color: #9ca3af;
+    font-style: italic;
+    text-align: left;
+}
+
+.final-section .input-unit {
+    max-width: 150px;
+}
 
 .btn-calculate {
     width: 100%;
@@ -153,9 +177,7 @@ input:focus { border-color: var(--primary); }
 }
 .btn-calculate:hover { background: var(--primary-hover); }
 
-.disabled-input { color: #9ca3af; font-style: italic; text-align: left; }
-
-/* NEW: Layout styles for your running Current Class Grade section */
+/* Layout styles for your running Current Class Grade section */
 .current-grade-display {
     font-size: 18px;
     font-weight: 600;

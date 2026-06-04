@@ -12,15 +12,15 @@
     --muted-text: #6b7280;
 }
 
-/* FIX: Optimized Dark Theme Variable Mapping */
+/* Dark Theme Color Palette */
 .dark-theme {
-    --bg: #0f172a;          /* Deep midnight slate canvas */
-    --card-bg: #1e293b;     /* Distinct charcoal card backgrounds */
-    --text: #f8fafc;        /* High-contrast off-white text */
-    --border: #334155;      /* Subtle slate divider borders */
-    --section-bg: #111827;  /* Dark embedded sub-cards for categories */
-    --input-bg: #334155;    /* Visible, sleek input boxes */
-    --muted-text: #94a3b8;  /* Light gray for sub-labels and placeholders */
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --text: #f8fafc;
+    --border: #334155;
+    --section-bg: #111827; /* Visible embedded box color for categories */
+    --input-bg: #334155;   /* Visible input text-box fill */
+    --muted-text: #94a3b8; /* Clear high-contrast text color for help notes */
 }
 
 body {
@@ -63,9 +63,9 @@ label {
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 6px;
+    color: var(--text);
 }
 
-/* FIX: Flexible styling rules for cross-theme text fields */
 input {
     padding: 10px;
     background-color: var(--input-bg);
@@ -77,15 +77,11 @@ input {
     transition: border-color 0.2s, background-color 0.3s, color 0.3s;
 }
 
-input::placeholder {
-    color: var(--muted-text);
-}
-
 input:focus { border-color: var(--primary); }
 
 /* Section Cards */
 .grade-section {
-    background: var(--section-bg);
+    background: var(--section-bg); 
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 16px;
@@ -95,17 +91,26 @@ input:focus { border-color: var(--primary); }
 
 .grade-section h3 { margin: 0 0 12px 0; color: var(--text); }
 
-/* Controls layout header */
+/* FIX: Forces checkbox and total weight boxes to stay right while Add button stays left */
 .section-controls {
     display: flex;
     gap: 16px;
     align-items: center;
-    margin-bottom: 12px;
+    justify-content: space-between; /* Creates the left-to-right split */
+    margin-bottom: 16px;
     font-size: 14px;
     color: var(--text);
 }
 
-/* Row wrapper elements */
+/* Helper container to keep checkbox and total weight grouped cleanly on the right */
+.section-controls-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: flex-end;
+}
+
+/* Row elements: Keep labels on the left margin wall and input clusters right */
 .section-row {
     display: flex;
     justify-content: space-between;
@@ -114,6 +119,7 @@ input:focus { border-color: var(--primary); }
     gap: 12px;
 }
 
+/* Flex grouping wrapper to pin score, weight, and delete blocks flush right */
 .section-row .row-inputs-group {
     display: flex;
     align-items: center;
@@ -121,6 +127,7 @@ input:focus { border-color: var(--primary); }
     gap: 10px;
 }
 
+/* Anchors item metrics labels cleanly along the left margin */
 .row-label {
     text-align: left;
     font-weight: 500;
@@ -143,7 +150,6 @@ input:focus { border-color: var(--primary); }
     background: #fca5a5;
 }
 
-/* FIX: Added color mapping to percentage symbols */
 .input-unit {
     display: flex;
     align-items: center;
@@ -151,8 +157,8 @@ input:focus { border-color: var(--primary); }
     color: var(--text);
 }
 
-.input-unit input { 
-    width: 80px; 
+.input-unit input {
+    width: 80px; /* Aligned and proportioned perfectly for percentages */
 }
 
 .btn-add {
@@ -164,21 +170,32 @@ input:focus { border-color: var(--primary); }
     font-weight: 600;
     cursor: pointer;
     font-size: 13px;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, color 0.2s;
 }
 .btn-add:hover { background: #c7d2fe; }
 
-/* Forces theme compatibility layout configuration on theme switch toggles */
+/* Accessible button styling adjustment for Dark Mode */
 .dark-theme .btn-add {
     background: #312e81;
     color: #c7d2fe;
 }
 .dark-theme .btn-add:hover { background: #3730a3; }
 
+/* Keeps final exam layout structured split left-to-right */
 .final-section .section-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.final-section .disabled-input {
+    color: var(--muted-text);
+    font-style: italic;
+    text-align: left;
+}
+
+.final-section .input-unit {
+    max-width: 150px;
 }
 
 .btn-calculate {
@@ -196,9 +213,7 @@ input:focus { border-color: var(--primary); }
 }
 .btn-calculate:hover { background: var(--primary-hover); }
 
-.disabled-input { color: var(--muted-text); font-style: italic; }
-
-/* Running Class Standings metrics split card text values */
+/* Class Standings Metrics */
 .current-grade-display {
     font-size: 18px;
     font-weight: 600;
@@ -207,9 +222,12 @@ input:focus { border-color: var(--primary); }
 }
 
 .current-grade-display span {
-    color: #6366f1; /* Vibrant indigo adjustment for clean dark readability */
+    color: var(--primary);
     font-size: 22px;
     font-weight: 700;
+}
+.dark-theme .current-grade-display span {
+    color: #818cf8; /* Softer, accessible indigo hue for dark backgrounds */
 }
 
 .result-divider {
@@ -225,12 +243,10 @@ input:focus { border-color: var(--primary); }
     background: #eef2ff;
     border-left: 4px solid var(--primary);
     text-align: center;
-    color: #1f2937; /* Base crisp dark gray for text in the results box */
+    color: #1f2937; /* Clean charcoal color for output results text */
 }
-
-/* FIX: Re-colors results calculation window when dark mode is active */
 .dark-theme .result-box {
-    background: #1e1b4b;
+    background: #1e1b4b; /* Deep matte indigo backing */
     border-left: 4px solid #6366f1;
     color: #f8fafc;
 }
@@ -242,7 +258,7 @@ input:focus { border-color: var(--primary); }
 
 .hidden { display: none !important; }
 
-/* Dark Mode Toggle Button Layout */
+/* Dark Mode Toggle Button Fixed Layout */
 .theme-toggle-container {
     display: flex;
     justify-content: flex-end;
@@ -262,5 +278,5 @@ input:focus { border-color: var(--primary); }
 }
 .btn-theme:hover {
     background: var(--primary);
-    color: white;
+    color: #ffffff;
 }

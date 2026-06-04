@@ -202,7 +202,7 @@ function calculateGrade(isExplicitClick = true) {
     }
 
     // Render outputs
-    currentGradeSpan.innerText = currentClassGrade;
+    currentGradeSpan.innerText = currentClassGrade + extraCredit;
     requiredScoreSpan.innerText = requiredFinal;
     resultDiv.classList.remove('hidden');
 

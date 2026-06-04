@@ -70,27 +70,33 @@ input:focus { border-color: var(--primary); }
 
 .grade-section h3 { margin: 0 0 12px 0; color: #374151; }
 
+/* FIX: Flushes check-boxes and global weights neatly to the right side */
 .section-controls {
     display: flex;
     gap: 16px;
     align-items: center;
-    margin-bottom: 12px;
+    justify-content: flex-end;
+    margin-bottom: 16px;
     font-size: 14px;
 }
 
+/* FIX: Refined spacing and alignments for 4-column item rows */
 .section-row {
     display: grid;
-    /* Grid expanded to 4 columns to fit the delete button smoothly */
-    grid-template-columns: 1.5fr 1.5fr 1.5fr 1fr;
-    gap: 10px;
+    grid-template-columns: 2fr 1.2fr 1.2fr 0.8fr;
+    gap: 12px;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    text-align: right;
 }
 
-/* For shared total weight view layout alignment */
+/* FIX: Keeps columns perfectly proportional when individual weights are hidden */
 .section-row.shared-weight {
-    /* When weights are hidden, keep columns aligned nicely */
-    grid-template-columns: 1.5fr 1.5fr 0fr 1fr;
+    grid-template-columns: 2fr 1.2fr 0fr 0.8fr;
+}
+
+.section-row.shared-weight .hidden {
+    display: none !important;
 }
 
 .btn-delete {
@@ -109,24 +115,27 @@ input:focus { border-color: var(--primary); }
     background: #fca5a5;
 }
 
-
+/* FIX: Ensures the input metrics and labels stay clean */
 .input-unit {
     display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: flex-end;
+    gap: 6px;
 }
 
 .input-unit input { width: 100%; }
 
+/* FIX: Keeps the Add button anchored left, pushing other elements right */
 .btn-add {
     background: #e0e7ff;
     color: var(--primary);
     border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 8px 14px;
+    border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
     font-size: 13px;
+    margin-right: auto;
 }
 .btn-add:hover { background: #c7d2fe; }
 
@@ -144,7 +153,27 @@ input:focus { border-color: var(--primary); }
 }
 .btn-calculate:hover { background: var(--primary-hover); }
 
-.disabled-input { color: #9ca3af; font-style: italic; }
+.disabled-input { color: #9ca3af; font-style: italic; text-align: left; }
+
+/* NEW: Layout styles for your running Current Class Grade section */
+.current-grade-display {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #374151;
+}
+
+.current-grade-display span {
+    color: var(--primary);
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.result-divider {
+    border: 0;
+    border-top: 1px dashed #c7d2fe;
+    margin: 12px 0;
+}
 
 .result-box {
     margin-top: 20px;

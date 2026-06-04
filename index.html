@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Final Grade Calculator</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
     <div class="calculator-container">
@@ -15,11 +16,11 @@
             <div class="top-fields">
                 <div class="input-group">
                     <label for="target-grade">Target Grade (%)</label>
-                    <input type="number" id="target-grade" placeholder="e.g., 90" required min="0" max="150">
+                    <input type="number" id="target-grade" placeholder="e.g., 90" required min="0" max="150" oninput="calculateGrade(false)">
                 </div>
                 <div class="input-group">
                     <label for="extra-credit">Extra Credit (%)</label>
-                    <input type="number" id="extra-credit" placeholder="e.g., 2" min="0" value="0">
+                    <input type="number" id="extra-credit" placeholder="e.g., 2" min="0" value="0" oninput="calculateGrade(false)">
                 </div>
             </div>
 
@@ -30,21 +31,23 @@
                 <div class="section-row">
                     <span class="disabled-input">Final Exam Score Needed</span>
                     <div class="input-unit">
-                        <input type="number" id="final-weight" placeholder="Weight" required min="0" max="100">
+                        <input type="number" id="final-weight" placeholder="Weight" required min="0" max="100" oninput="calculateGrade(false)">
                         <span class="unit-label">%</span>
                     </div>
                 </div>
             </div>
 
-            <button type="button" class="btn-calculate" onclick="calculateGrade()">Calculate Required Score</button>
+            <button type="button" class="btn-calculate" onclick="calculateGrade(true)">Calculate Required Score</button>
         </form>
 
         <div id="result" class="result-box hidden">
+            <div class="current-grade-display">
+                Your Current Class Grade: <span id="current-grade-score">0</span>%
+            </div>
+            <hr class="result-divider">
             <h2>You need a <span id="required-score">0</span>% on the final exam.</h2>
             <p id="result-message"></p>
         </div>
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>

@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <input type="checkbox" id="check-${sec.id}" onchange="toggleWeightMode('${sec.id}')"> Individual Weights
                 </label>
                 <div class="input-unit" id="total-weight-wrapper-${sec.id}">
-                    <input type="number" id="total-weight-${sec.id}" placeholder="Total Class Weight" min="0" max="100">
+                    <input type="number" id="total-weight-${sec.id}" placeholder="Total Weight" min="0" max="100" oninput="calculateGrade(false)">
                     <span>% of grade</span>
                 </div>
             </div>
@@ -40,38 +40,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 2. Add an assignment row to a category with a delete action
 function addRow(sectionId) {
-    sectionCounts[sectionId]++;
-    const count = sectionCounts[sectionId];
     const rowsContainer = document.getElementById(`rows-${sectionId}`);
     const isIndividual = document.getElementById(`check-${sectionId}`).checked;
-    
-    // Find the current section configuration to grab its singular name
     const secConfig = sections.find(s => s.id === sectionId);
+
+    // Create unique ID timestamp to keep track of the element safely
+    const uniqueId = Date.now() + Math.random().toString(36).substr(2, 5);
 
     const row = document.createElement('div');
     row.className = `section-row ${isIndividual ? '' : 'shared-weight'}`;
-    row.id = `row-${sectionId}-${count}`;
+    row.id = `row-${sectionId}-${uniqueId}`;
     
     row.innerHTML = `
-        <span>${secConfig.singular} #${count}</span>
+        <span class="row-label">${secConfig.singular}</span>
         <div class="input-unit">
-            <input type="number" class="${sectionId}-score" placeholder="Score" min="0">
+            <input type="number" class="${sectionId}-score" placeholder="Score" min="0" oninput="calculateGrade(false)">
             <span>%</span>
         </div>
-        <div class="input-unit ${isIndividual ? '' : 'hidden'}" id="weight-input-wrapper-${sectionId}-${count}">
-            <input type="number" class="${sectionId}-weight" placeholder="Weight" min="0">
+        <div class="input-unit ${isIndividual ? '' : 'hidden'}" id="weight-input-wrapper-${sectionId}-${uniqueId}">
+            <input type="number" class="${sectionId}-weight" placeholder="Weight" min="0" oninput="calculateGrade(false)">
             <span>%</span>
         </div>
-        <button type="button" class="btn-delete" onclick="removeRow('${sectionId}', ${count})">Delete</button>
+        <button type="button" class="btn-delete" onclick="removeRow('${sectionId}', '${uniqueId}')">Delete</button>
     `;
     rowsContainer.appendChild(row);
+
+    // Call helper to clean up numbering sequentially (1, 2, 3...)
+    updateRowNumbers(sectionId);
 }
 
-// New helper to remove a specific row entry
-function removeRow(sectionId, rowCount) {
-    const rowToRemove = document.getElementById(`row-${sectionId}-${rowCount}`);
+// Helper to remove a specific row entry and trigger re-numbering
+function removeRow(sectionId, uniqueId) {
+    const rowToRemove = document.getElementById(`row-${sectionId}-${uniqueId}`);
     if (rowToRemove) {
         rowToRemove.remove();
+        updateRowNumbers(sectionId);
+        calculateGrade(false); // Live update calculations on delete silently
+    }
+}
+
+// Loops through existing rows and cleanly fixes numbering order (e.g. 1, 2, 3)
+function updateRowNumbers(sectionId) {
+    const rowsContainer = document.getElementById(`rows-${sectionId}`);
+    const rows = rowsContainer.children;
+    const secConfig = sections.find(s => s.id === sectionId);
+
+    for (let i = 0; i < rows.length; i++) {
+        const labelSpan = rows[i].querySelector('.row-label');
+        if (labelSpan) {
+            labelSpan.innerText = `${secConfig.singular} #${i + 1}`;
+        }
     }
 }
 
@@ -79,33 +97,38 @@ function removeRow(sectionId, rowCount) {
 function toggleWeightMode(sectionId) {
     const isIndividual = document.getElementById(`check-${sectionId}`).checked;
     
-    // Toggle overall section weight input visibility
     document.getElementById(`total-weight-wrapper-${sectionId}`).classList.toggle('hidden', isIndividual);
     
-    // Toggle individual weight input visibilities across rows
     const rows = document.getElementById(`rows-${sectionId}`).children;
     for (let i = 0; i < rows.length; i++) {
-        const rowId = rows[i].id.split('-').pop();
-        const weightWrapper = document.getElementById(`weight-input-wrapper-${sectionId}-${rowId}`);
+        const uniqueId = rows[i].id.replace(`row-${sectionId}-`, '');
+        const weightWrapper = document.getElementById(`weight-input-wrapper-${sectionId}-${uniqueId}`);
         
         if (isIndividual) {
             rows[i].classList.remove('shared-weight');
-            weightWrapper.classList.remove('hidden');
+            if (weightWrapper) weightWrapper.classList.remove('hidden');
         } else {
             rows[i].classList.add('shared-weight');
-            weightWrapper.classList.add('hidden');
+            if (weightWrapper) weightWrapper.classList.add('hidden');
         }
     }
+    calculateGrade(false);
 }
 
 // 4. Heavy Math Calculations
-function calculateGrade() {
+// Pass 'true' when clicking the main button to trigger strict validation alerts.
+function calculateGrade(isExplicitClick = true) {
     const targetGrade = parseFloat(document.getElementById('target-grade').value);
     const finalWeight = parseFloat(document.getElementById('final-weight').value);
     const extraCredit = parseFloat(document.getElementById('extra-credit').value) || 0;
 
+    const resultDiv = document.getElementById('result');
+    const requiredScoreSpan = document.getElementById('required-score');
+    const currentGradeSpan = document.getElementById('current-grade-score');
+    const messageP = document.getElementById('result-message');
+
     if (isNaN(targetGrade) || isNaN(finalWeight)) {
-        alert("Please fill out your Target Grade and Final Exam Weight.");
+        if (isExplicitClick) alert("Please fill out your Target Grade and Final Exam Weight.");
         return;
     }
 
@@ -136,36 +159,33 @@ function calculateGrade() {
             }
         });
 
-        if (validScores.length === 0) continue; // Skip category entirely if left blank
+        if (validScores.length === 0) continue; 
 
         if (isIndividual) {
-            // Logic for uniquely weighted assignments
             totalWeightCalculated += totalIndividualWeight;
             for (let i = 0; i < validScores.length; i++) {
                 currentEarnedPoints += (validScores[i] * (individualWeights[i] / 100));
             }
         } else {
-            // Logic for evenly split assignments under one global weight
             const groupWeight = parseFloat(document.getElementById(`total-weight-${sec.id}`).value);
             if (isNaN(groupWeight)) {
-                alert(`Please enter a group category weight for ${sec.name}, or choose Individual Weights.`);
+                if (isExplicitClick) alert(`Please enter a group category weight for ${sec.name}, or choose Individual Weights.`);
                 return;
             }
             totalWeightCalculated += groupWeight;
             
-            // Average the scores together, then multiply by category weight contribution
             const avgScore = validScores.reduce((a, b) => a + b, 0) / validScores.length;
             currentEarnedPoints += (avgScore * (groupWeight / 100));
         }
     }
 
-    // Strict 100% boundary validations
+    // Strict 100% boundary validations (Only blocks execution if user manually clicks Calculate)
     if (totalWeightCalculated > 100) {
-        alert(`Error: Your setup totals ${totalWeightCalculated}%. This exceeds a normal 100% class composition.`);
+        if (isExplicitClick) alert(`Error: Your setup totals ${totalWeightCalculated}%. This exceeds a normal 100% class composition.`);
         return;
     }
     if (totalWeightCalculated < 100) {
-        alert(`Error: Total weights sum up to only ${totalWeightCalculated}%. They must equal exactly 100% to evaluate correctly.`);
+        if (isExplicitClick) alert(`Error: Total weights sum up to only ${totalWeightCalculated}%. They must equal exactly 100% to evaluate correctly.`);
         return;
     }
 
@@ -173,11 +193,15 @@ function calculateGrade() {
     const pointsNeeded = targetGrade - currentEarnedPoints - extraCredit;
     const requiredFinal = (pointsNeeded / (finalWeight / 100)).toFixed(2);
 
-    // Render output
-    const resultDiv = document.getElementById('result');
-    const requiredScoreSpan = document.getElementById('required-score');
-    const messageP = document.getElementById('result-message');
+    // Calculate current class grade
+    const weightWithoutFinal = totalWeightCalculated - finalWeight;
+    let currentClassGrade = 0;
+    if (weightWithoutFinal > 0) {
+        currentClassGrade = ((currentEarnedPoints + extraCredit) / (weightWithoutFinal / 100)).toFixed(2);
+    }
 
+    // Render outputs
+    currentGradeSpan.innerText = currentClassGrade;
     requiredScoreSpan.innerText = requiredFinal;
     resultDiv.classList.remove('hidden');
 
@@ -188,8 +212,17 @@ function calculateGrade() {
         requiredScoreSpan.innerText = "0";
         messageP.innerText = "Fantastic! You have mathematically clinched your target score already.";
         messageP.style.color = "var(--success)";
-    } else {
+    } else if (requiredFinal <= 50){
+        messageP.innerText = "You're in a great spot!";
+        messageP.style.color = "var(--text)";
+    } else if (requiredFinal <= 75){
         messageP.innerText = "Perfectly doable. Good Luck!";
+        messageP.style.color = "var(--text)";
+    } else if (requiredFinal <= 90){
+        messageP.innerText = "You got this! Study Hard!!";
+        messageP.style.color = "var(--text)";
+    } else {
+        messageP.innerText = "It's going to be tough. Lock in!";
         messageP.style.color = "var(--text)";
     }
 }

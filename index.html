@@ -10,7 +10,15 @@
 <body>
     <div class="calculator-container">
         <h1>Final Grade Calculator</h1>
-        <p>Dynamically calculate what you need on your final exam.</p>
+        <p> Calculate what you need on your final exam.
+            Enter your target grade, any extra credit, and the weights of your assignments. 
+            You can choose to input either total category weights or individual assignment weights. 
+            NOTE: The extra credit will be added as a bonus % to your current grade. 
+            Your final exam threshold does include the extra credit.
+            If extra credit is per assignment and not a  overall bonus, simply add it to the assignment score and do not input anything in the extra credit field.
+            Example +10% to an assignment would be 110% score for that assignment.
+
+        </p>
         
         <form id="grade-form">
             <div class="top-fields">
@@ -19,7 +27,7 @@
                     <input type="number" id="target-grade" placeholder="e.g., 90" required min="0" max="150" oninput="calculateGrade(false)">
                 </div>
                 <div class="input-group">
-                    <label for="extra-credit">Extra Credit (%)</label>
+                    <label for="extra-credit">Extra Credit (%) </label>
                     <input type="number" id="extra-credit" placeholder="e.g., 2" min="0" value="0" oninput="calculateGrade(false)">
                 </div>
             </div>
